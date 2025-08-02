@@ -1,8 +1,7 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, SafeAreaView } from 'react-native';
-import { useThemeColors } from '@/hooks/useThemeColors';
 import { useTheme } from '@/context/ThemeContext';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import React from 'react';
+import { Image, SafeAreaView, Text, View } from 'react-native';
 
 type Feature = {
   icon: string;
@@ -24,11 +23,11 @@ const WelcomeScreen: React.FC = () => {
   return (
     <SafeAreaView className={`flex-1 ${currentTheme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
       <View className="items-center px-5 py-10">
-        <Image
-          source={require('@/assets/images/school.png')}
-          className="w-[10px] h-[10px] mb-6"
-          resizeMode="contain"
-        />
+     <Image
+  source={require('@/assets/images/school.png')}
+  style={{ width: 100, height: 100, marginBottom: 24 }}
+  resizeMode="contain"
+/>
         <Text className={`text-28 font-bold text-center mb-3 ${currentTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
           HairCut App
         </Text>
@@ -38,9 +37,9 @@ const WelcomeScreen: React.FC = () => {
         {/* Example usage of features */}
         {features.map((feature, index) => (
           <View key={index} className="flex-row items-center mb-3">
-            <Text className="text-2xl mr-3">{feature.icon}</Text>
+            <Text className="mr-3 text-2xl">{feature.icon}</Text>
             <View>
-              <Text className="font-medium text-base text-gray-700 dark:text-gray-200">{feature.text}</Text>
+              <Text className="text-base font-medium text-gray-700 dark:text-gray-200">{feature.text}</Text>
               <Text className="text-sm text-gray-500 dark:text-gray-400">{feature.description}</Text>
             </View>
           </View>
