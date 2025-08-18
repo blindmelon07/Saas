@@ -1,8 +1,8 @@
-import { useContext, createContext, type PropsWithChildren, useEffect } from "react";
-import { useStorageState } from "@/hooks/useStorageState";
-import { router } from "expo-router";
-import axios from "axios";
 import axiosInstance from "@/app/config/axiosConfig";
+import { useStorageState } from "@/hooks/useStorageState";
+import axios from "axios";
+import { router } from "expo-router";
+import { createContext, type PropsWithChildren, useContext, useEffect } from "react";
 
 
 interface User {
@@ -14,16 +14,17 @@ interface User {
 
 }
 interface AuthContextType {
-   singIn:(token: string, user: User) => void;
-   signOut: () => void;
+   signIn:(token: string, user: User) => Promise<void>;
+   signOut: () => Promise<void>;
    session?: string | null;
     user?: User | null;
+    isLoading?: boolean;
     updateUser: (userData: any) => Promise<void>;
 }
 const AuthContext = createContext<AuthContextType>({
 
-    singIn: () => {},
-    signOut: () => {},
+    signIn: async () => {},
+    signOut: async () => {},
     session: null,
     user: null,
     isLoading: false,
@@ -43,10 +44,6 @@ export function useSession() {
 export function SessionProvider({ children }: PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState('session');
     const [[, user], setUser] = useStorageState('user');
-
-    const updateUser = async (userData: any) => {
-        await setUser(userData);
-    };
 
     const handleSignOut = async () =>{
         try {
@@ -82,7 +79,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         }else {
  console.error("Error fetching user data:", error);
         }
-    
+        }
     };
     useEffect(() => {
         if (session) {
@@ -99,19 +96,19 @@ export function SessionProvider({ children }: PropsWithChildren) {
             return null;
         }
     })() : null;
-    const hadleUpdateUser = async (userData: any) => {
+    const handleUpdateUser = async (userData: any) => {
         try {
             const userString = JSON.stringify(userData);
-            await setUser(userString);
+            setUser(userString);
         } catch (error) {
             console.error("Error updating user data:", error);
             throw error;
         }
     };
-    const handleSignIn = (token: string, userData: User) => {
+    const handleSignIn = async  (token: string, userData: User) => {
     try {
-        await setSession(token);
-           await setUser(JSON.stringify(userData));
+        setSession(token);
+           setUser(JSON.stringify(userData));
     } catch (error) {
         console.error("Error during sign in:", error);
         throw error;
@@ -120,7 +117,12 @@ export function SessionProvider({ children }: PropsWithChildren) {
     return (
         <AuthContext.Provider
             value={{
-              
+              signIn: handleSignIn,
+              signOut: handleSignOut,
+                session,
+                user: parsedUser,
+                isLoading,
+                updateUser: handleUpdateUser,
             }}
         >
             {children}
