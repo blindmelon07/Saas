@@ -6,7 +6,15 @@ module.exports = {
   ],
   presets: [require('nativewind/preset')], // <-- Add this line
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary : {
+          DEFAULT: require('tailwindcss/colors').emerald[500],
+          light:require('tailwindcss/colors').emerald[400],
+          dark: require('tailwindcss/colors').emerald[600],
+        },
+      }
+    },
   },
   plugins: [],
 };

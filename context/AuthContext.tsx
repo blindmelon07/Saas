@@ -56,7 +56,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
                 });
                 setSession(null);
                 setUser(null);
-                router.replace('/sign-in');
+                router.replace('/signIn');
             }
         } catch (error) {
             console.error("Error during sign out:", error);
@@ -75,7 +75,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
             if (axios.isAxiosError(error) && error.response?.status === 401) {
                 setSession(null);
                 setUser(null);
-                router.replace('/sign-in');
+                router.replace('/signIn');
         }else {
  console.error("Error fetching user data:", error);
         }

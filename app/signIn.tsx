@@ -1,5 +1,7 @@
+import { useSession } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import axios from 'axios';
+import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Image, Text, View } from 'react-native';
 import Button from './components/core/Button';
@@ -8,44 +10,41 @@ import axiosInstance from './config/axiosConfig';
 
 
 
-const Signup = () => {
+const Login = () =>{
+  const { signIn } = useSession();
   const {currentTheme} = useTheme();
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
+    email: "",
+    password: "",
   });
   const [errors, setErrors] = useState({
-    name: '',
+  
     email: '',
     password: '',
-    password_confirmation: '',
+ 
   });
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
   const handleChange = (key:string, value: string) => {
     setData({...data, [key]: value});
+    setErrors({...errors, [key]: ""});
   };
   const handleSignup = async () => {
     setLoading(true);
     setErrors({
-      name: '',
+     
       email: '',
       password: '',
-      password_confirmation: '',
-    })
+    });
     try {
-      await axiosInstance.post('/api/register', data);
-
-      resetForm();
-      setSuccessMessage("Account created successfully")
+      const response = await axiosInstance.post('/api/login', data);
+      await signIn(response.data.token, response.data.user);
+      router.replace("/(app)/home");
     } catch (error) {
-      if (axios.isAxiosError(error)) {
+      if (axios.isAxiosError(error)){
         const responseData = error.response?.data;
-        if (responseData?.errors){
+        if(responseData?.errors) {
           setErrors(responseData.errors);
-        }else if (responseData.message){
+        }else if (responseData?.message) {
           Alert.alert("Error", responseData.message);
         }else {
           Alert.alert("Error", "An unexpected error occured");
@@ -57,38 +56,21 @@ const Signup = () => {
     }finally {
       setLoading(false);
     }
-  };
-  const resetForm = () => {
-    setData({
-      name: '',
-      email: '',
-      password: '',
-      password_confirmation: '',
-    });
   }
-  return (
+  return(
     <View className={`flex-1 justify-center items-center p-5 ${currentTheme === 'dark' ?
-     'bg-gray-900' : 'bg-gray-50'}`}>
-      <View className='items-center mb-8'>
-        <Image
+      'bg-gray-900' : 'bg-gray-50'}`}>
+ <View className='items-center mb-8'>
+ <Image
         source={require('../assets/images/school.png')}
         className="w-32 h-32"
         resizeMode="contain"/>
-        <Text className={'text-2xl font-bold mt-4'}>
+           <Text className={'text-2xl font-bold mt-4'}>
           HairCutApp
         </Text>
-      </View>
-      <Text className={`text-3xl font-bold mb-5 ${currentTheme === 'dark' ? 'text-white': 'text-gray-900'}`}
-      >Signup</Text>
-      {!!successMessage && (
-        <Text className="bg-emerald-600 text-white rounded-lg py-3 px-4 mb-4">{successMessage}</Text>
-      )}
-      <Input
-      placeholder="Name"
-      value={data.name}
-      onChangeText={(value) => handleChange("name", value)}
-      error={errors.name}
-      />
+ </View>
+ <Text className={`text-3xl font-bold mb-5 ${currentTheme === 'dark' ? 'text-white': 'text-gray-900'}`}
+      >Login</Text>
       <Input
       placeholder="Email"
       value={data.email}
@@ -96,33 +78,32 @@ const Signup = () => {
     keyboardType="email-address"
     error={errors.email}
       />
-      <Input
+ <Input
       placeholder="Password"
       value={data.password}
       onChangeText={(value) => handleChange("password", value)}
    secureTextEntry
     error={errors.password}
       />
-      <Input
-      placeholder="Confirm Password"
-      value={data.password_confirmation}
-      onChangeText={(value) => handleChange("password_confirmation", value)}
-   secureTextEntry
-    error={errors.password_confirmation}
-      />
-      <Button className="w-full bg-primary mb-4"
+ <Button className="w-full bg-primary mb-4"
         onPress={handleSignup}
         disabled={loading}
         loading = {loading}
         >
           <View className="flex-row items-center justify-center">
             {loading && <ActivityIndicator size="small" color= "#ffffff" className="mr-3"/>}
-            <Text className="text-white text-center">Signup</Text>
+            <Text className="text-white text-center">Login</Text>
           </View>
       </Button>
-      <Text className={`text-lg ${currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-5`}></Text>
-    </View>
+      <Text className={`text-lg ${currentTheme === 'dark' ? 'text-gray-400' : 
+        'text-gray-600'} mt-5`}>
+          <Link href="/signup">
+          <Text className="text-primary">Sign Up</Text>
+          
+          </Link>
+        </Text>
+      </View>
+
   );
 }
-
-export default Signup;
+export default Login;

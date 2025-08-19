@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { API_BASE_URL } from './env';
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
+import { API_BASE_URL } from './env';
 
 
 const axiosInstance = axios.create({
@@ -13,15 +14,26 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-    async (config) => {
-        const token = await SecureStore.getItemAsync('session');
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+  async (config) => {
+    let token: string | null = null;
+    try {
+      if (Platform.OS === 'web') {
+        if (typeof localStorage !== 'undefined') {
+          token = localStorage.getItem('session');
         }
-      return config;
-    },
-    (error) => {Promise.reject(error);
+      } else {
+        token = await SecureStore.getItemAsync('session');
+      }
+    } catch (e) {
+      // noop: if storage access fails, proceed without token
     }
+
+    if (token) {
+      (config.headers as any)['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
 

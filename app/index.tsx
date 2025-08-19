@@ -59,7 +59,7 @@ const WelcomeScreen: React.FC = () => {
           <TouchableOpacity
             className="h-[54px] rounded-xl border-[1.5px] justify-center items-center mb-4"
             style={{ borderColor: colors.primary }}
-            onPress={() => router.push('/sign-in')}
+            onPress={() => router.push('/signIn')}
           >
             <Text className="font-medium text-gray-800 dark:text-white">Sign In</Text>
           </TouchableOpacity>

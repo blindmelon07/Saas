@@ -1,11 +1,39 @@
 
-import { ThemeProvider } from "@/context/ThemeContext";
-import { Stack } from "expo-router";
+import { SessionProvider, useSession } from "@/context/AuthContext";
+import { ThemeProvider, useTheme } from "@/context/ThemeContext";
+import { Redirect, Slot } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import "../global.css";
 
+
+function Header() {
+  const {currentTheme} = useTheme();
+  const {session, isLoading} = useSession();
+  if (session && !isLoading) {
+    return (
+      <>
+      <StatusBar
+        style={currentTheme === 'dark' ? 'light' : 'dark'} 
+      backgroundColor={currentTheme === 'dark' ? '#111927' : '#ffffff'}
+    />
+    <Redirect href="/home"/>
+    </>
+    );
+  }
+  return (
+    <StatusBar
+    style={currentTheme === 'dark' ? 'light' : 'dark'} 
+  backgroundColor={currentTheme === 'dark' ? '#111927' : '#ffffff'}
+/>
+  );
+}
+
 export default function RootLayout() {
-  return <ThemeProvider>
-<Stack />
+  return <SessionProvider>
+    <ThemeProvider>
+      <Header />
+  <Slot />
   </ThemeProvider>
+  </SessionProvider>
   
 }
