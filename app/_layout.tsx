@@ -16,7 +16,7 @@ function Header() {
         style={currentTheme === 'dark' ? 'light' : 'dark'} 
       backgroundColor={currentTheme === 'dark' ? '#111927' : '#ffffff'}
     />
-    <Redirect href="/home"/>
+    <Redirect href="/(app)/(tabs)"/>
     </>
     );
   }

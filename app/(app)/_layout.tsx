@@ -23,7 +23,23 @@ const AppLayout = () => {
     contentStyle: { backgroundColor: colors.background },
     headerTitleStyle: { color: colors.text},
     
-  }}/>;
+  }}>
+    <Stack.Screen name="(tabs)" 
+    options={{ headerShown: false }}
+     />
+     <Stack.Screen name="restore" 
+    options={{ headerTitle: "Restore Images" }}
+     />
+     <Stack.Screen name="generative-fill" 
+    options={{ headerTitle: "Generate  Images" }}
+     />
+        <Stack.Screen name="recolor" 
+    options={{ headerTitle: "Recolor  Images" }}
+     />
+     <Stack.Screen name="remove" 
+    options={{ headerTitle: "Remove  Hair" }}
+     />
+    </Stack>;
 };
 
 export default AppLayout;
